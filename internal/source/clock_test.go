@@ -77,7 +77,7 @@ func TestIntroHasNativeTablesAndNoPerStepAllocation(t *testing.T) {
 	for tick := 1; tick <= EntranceTicks+CurtainTicks; tick++ {
 		c.Step([3]int{})
 	}
-	if c.Stage != 1 || c.EntryY != 84 || c.EntryFrame != 8 {
+	if c.Stage != 0 || c.EntryY != 84 || c.EntryFrame != 8 {
 		t.Fatalf("incorrect entrance or curtain phase: %+v", c)
 	}
 	c.Step([3]int{})
@@ -86,5 +86,22 @@ func TestIntroHasNativeTablesAndNoPerStepAllocation(t *testing.T) {
 	}
 	if n := testing.AllocsPerRun(1000, func() { c.Step([3]int{6, 9, 12}) }); n != 0 {
 		t.Fatalf("controller allocated %g objects", n)
+	}
+}
+
+func TestBackdropIsCompleteBeforeTheBallsArrive(t *testing.T) {
+	c := testClock(t)
+	for tick := 1; tick <= CurtainTicks; tick++ {
+		c.Step([3]int{})
+		if c.Stage != 1 || c.EntryY != -32 {
+			t.Fatalf("balls appeared during logo reveal at tick %d", tick)
+		}
+	}
+	if c.Panel != 3 || c.CurtainX() != 0 {
+		t.Fatal("backdrop is incomplete at the entrance handoff")
+	}
+	c.Step([3]int{})
+	if c.Stage != 0 || c.EntryY != 1 || c.EntryFrame != 0 {
+		t.Fatal("ball entrance did not start over the completed backdrop")
 	}
 }

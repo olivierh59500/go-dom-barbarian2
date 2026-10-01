@@ -107,3 +107,43 @@ func TestEntrancePaletteKeepsCompletedPanelsUnchanged(t *testing.T) {
 		}
 	}
 }
+
+func TestBallEntranceStaysInFrontOfCompletedBackdrop(t *testing.T) {
+	gpu.RequireGPU(t)
+	game, err := NewGame(true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer game.Close()
+	for tick := 0; tick < source.CurtainTicks; tick++ {
+		game.clock.Step([3]int{})
+	}
+	sheet := make([]byte, 320*32*4)
+	game.images[2].ReadPixels(sheet)
+	stage := make([]byte, Width*Height*4)
+	for tick := 0; tick < 53; tick++ {
+		game.clock.Step([3]int{})
+		if err := game.render(); err != nil {
+			t.Fatal(err)
+		}
+		game.stage.ReadPixels(stage)
+		// Every opaque sprite pixel must cover the backdrop, through the full descent.
+		for ball := 0; ball < 3; ball++ {
+			for y := 0; y < 32; y++ {
+				for x := 0; x < 32; x++ {
+					sourceAt := (y*320 + game.clock.EntryFrame*32 + x) * 4
+					if sheet[sourceAt+3] == 0 {
+						continue
+					}
+					targetAt := ((game.clock.EntryY+y)*Width + 64 + ball*80 + x) * 4
+					if stage[targetAt] != sheet[sourceAt] || stage[targetAt+3] != 255 {
+						t.Fatalf("ball %d obscured at entrance tick %d pixel (%d,%d)", ball, tick, x, y)
+					}
+				}
+			}
+		}
+		if stage[3] != 255 {
+			t.Fatal("backdrop disappeared during ball entrance")
+		}
+	}
+}

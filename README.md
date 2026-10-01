@@ -3,8 +3,8 @@
 A Go/Ebitengine port of Dom’s Atari ST cracktro for **Barbarian II**, released
 by **The Replicants / The Union** in May 1989, using **DCK v1.0.14**.
 
-Three shaded balls descend onto the screen. Four bands reveal the metallic
-Replicants backdrop, with separate raster palette transitions. A red 32 × 20
+Four bands reveal the metallic Replicants backdrop, with separate raster palette
+transitions. Three shaded balls then descend in front of it. A red 32 × 20
 pixel scroller then moves through the original 28 column profiles and vertical
 bounce table. The background begins its hardware-style vertical scroll at the
 native cue. Each ball changes size with one of the three YM voice volumes.

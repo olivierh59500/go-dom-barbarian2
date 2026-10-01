@@ -32,7 +32,7 @@ func Words(b []byte) []int {
 	return out
 }
 func NewClock(entranceY, entranceFrames, wave, profiles []byte) (*Clock, error) {
-	c := &Clock{EntranceY: Words(entranceY), EntranceFrames: Words(entranceFrames), Wave: Words(wave), Profiles: Words(profiles), ProfileLimit: 150, Levels: [3]int{10, 10, 10}, EntryY: -32}
+	c := &Clock{Stage: 1, EntranceY: Words(entranceY), EntranceFrames: Words(entranceFrames), Wave: Words(wave), Profiles: Words(profiles), ProfileLimit: 150, Levels: [3]int{10, 10, 10}, EntryY: -32}
 	if len(c.EntranceY) != 54 || len(c.EntranceFrames) != 56 || len(c.Wave) != 189 || len(c.Profiles) != 560 {
 		return nil, fmt.Errorf("source: incomplete native motion tables")
 	}
@@ -40,31 +40,23 @@ func NewClock(entranceY, entranceFrames, wave, profiles []byte) (*Clock, error) 
 }
 func (c *Clock) Step(volumes [3]int) {
 	c.Tick++
-	if c.Tick <= EntranceTicks {
+	if c.Tick <= CurtainTicks {
+		c.Stage = 1
+		c.Panel = min(3, (c.Tick-1)/63)
+		c.PanelTick = c.Tick - c.Panel*63
+		return
+	}
+	if c.Tick <= CurtainTicks+EntranceTicks {
 		c.Stage = 0
-		index := c.Tick - 1
+		index := c.Tick - CurtainTicks - 1
 		if c.EntranceY[index] >= 0 {
 			c.EntryY, c.EntryFrame = c.EntranceY[index], c.EntranceFrames[index]
 		}
 		return
 	}
-	if c.Stage < 2 {
-		c.Stage = 1
-		c.PanelTick++
-		limit := 63
-		if c.Panel == 3 {
-			limit = 62
-		}
-		if c.PanelTick > limit {
-			c.Panel++
-			c.PanelTick = 1
-		}
-		if c.Panel == 4 {
-			c.Stage = 2
-			c.MainTick = 0
-		} else {
-			return
-		}
+	if c.Stage != 2 {
+		c.Stage = 2
+		c.MainTick = 0
 	}
 	c.MainTick++
 	frame := c.MainTick - 1

@@ -199,6 +199,7 @@ func (g *Game) render() error {
 	var poses [8]sprites.ImageSlot
 	count := 0
 	if g.clock.Stage == 0 {
+		g.background.Draw(g.stage, g.images[1], composite.BackgroundPose{})
 		if g.clock.Tick > 0 {
 			for i := 0; i < 3; i++ {
 				poses[count] = sprites.ImageSlot{Image: 2, Source: g.balls[g.clock.EntryFrame], X: float64(64 + i*80), Y: float64(g.clock.EntryY)}
@@ -206,10 +207,6 @@ func (g *Game) render() error {
 			}
 		}
 	} else if g.clock.Stage == 1 {
-		for i := 0; i < 3; i++ {
-			poses[count] = sprites.ImageSlot{Image: 2, Source: g.balls[g.clock.EntryFrame], X: float64(64 + i*80), Y: float64(g.clock.EntryY)}
-			count++
-		}
 		for panel := 0; panel <= g.clock.Panel; panel++ {
 			x := 0
 			if panel == g.clock.Panel {
@@ -242,7 +239,7 @@ func (g *Game) render() error {
 	}
 	g.slots.Draw(g.stage)
 	g.colors = g.baseColors
-	if g.clock.Stage == 2 {
+	if g.clock.Stage != 1 {
 		g.colors[6], g.colors[7], g.colors[8] = color.NRGBA{R: 238, A: 255}, color.NRGBA{R: 204, A: 255}, color.NRGBA{R: 170, A: 255}
 	}
 	if g.clock.Stage == 1 {
