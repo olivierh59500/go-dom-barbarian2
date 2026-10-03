@@ -17,6 +17,25 @@ preserves the original cue ordering at **50 Hz** on desktop and Android.
 
 Original production: <https://demozoo.org/productions/74492/>.
 
+<!-- Project showcase -->
+## Screenshots
+
+[![The metallic Replicants backdrop, three animated balls, and red scrolltext](docs/media/screenshot-1.png)](docs/media/screenshot-1.png)
+
+The metallic Replicants backdrop, three animated balls, and red scrolltext.
+
+## Video
+
+[![Animated preview of Dom Barbarian II Go](docs/media/preview.gif)](https://github.com/olivierh59500/go-dom-barbarian2/raw/refs/heads/main/docs/media/preview.mp4)
+
+**[Watch or download the 24-second MP4 preview with sound](https://github.com/olivierh59500/go-dom-barbarian2/raw/refs/heads/main/docs/media/preview.mp4)**
+
+This preview is captured from the Go production.
+
+The animated image is silent; the MP4 includes the soundtrack.
+
+<!-- End project showcase -->
+
 ## Desktop
 
 ```sh
